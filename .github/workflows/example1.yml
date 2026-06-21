@@ -1,7 +1,7 @@
 name: Simple Workflow
 
 on:
-  push:
+  push
     # This workflow will run when manually triggered
     # You can also trigger this workflow from the Actions tab in your repository.
 
