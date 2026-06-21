@@ -1,0 +1,24 @@
+name: Use cowsay without install
+
+# This workflow runs automatically on pushes to the main branch.
+# It demonstrates what happens when a workflow assumes a package is installed
+# but the runner does not have it available.
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  fail-with-cowsay:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run cowsay without installing
+        run: cowsay "This workflow should fail because cowsay is not installed"
+        # This command is expected to fail on a standard Ubuntu runner unless
+        # cowsay is preinstalled or installed earlier in the workflow.
+
+# Notes:
+# - `actions/checkout` is not needed here because the command does not access
+#   repository files, but it is often included in real workflows.
+# - Use a package installation step if your workflow depends on a tool that is
+#   not guaranteed to be present on the runner image.
+# - A failing step will stop the job unless `continue-on-error: true` is used.
