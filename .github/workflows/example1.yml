@@ -2,7 +2,8 @@ name: Simple Workflow
 
     # This workflow will run when manually triggered
     # You can also trigger this workflow from the Actions tab in your repository.
-
+on:
+  workflow_dispatch:
 
 
 jobs:
