@@ -1,0 +1,58 @@
+name: Job Concurrency Example
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Build application
+        run: echo "Building the application..."
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run linter
+        run: echo "Running linter..."
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run unit tests
+        run: echo "Running tests..."
+
+  deploy:
+    needs: [build, lint, test]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to production
+        run: echo "Deploying to production..."
+
+# Explanation:
+# - The workflow-level concurrency block ensures only one run of this workflow
+#   for a given branch is active at a time. When a new commit is pushed to the
+#   same branch, any in-progress run for that branch is canceled.
+# - `group` defines the concurrency key. Runs with the same `group` value are
+#   considered part of the same concurrency group.
+# - In this example, `group` is computed as `${{ github.workflow }}-${{ github.ref }}`:
+#   - `${{ github.workflow }}` is the workflow file name or display name
+#   - `${{ github.ref }}` is the branch or tag ref, such as `refs/heads/main`
+# - This means separate branches get separate concurrency groups, but multiple
+#   runs on the same branch for this workflow will cancel the older run.
+# - Jobs without a "needs" dependency (build and lint) can execute in parallel.
+# - The "test" job depends on "build", so it waits until build completes.
+# - The "deploy" job depends on build, lint, and test, so it starts after all
+#   required jobs are finished. This demonstrates how job-level ordering and
+#   workflow-level concurrency behave together.

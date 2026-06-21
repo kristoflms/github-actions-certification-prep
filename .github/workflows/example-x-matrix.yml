@@ -1,0 +1,29 @@
+name: X Matrix Docker
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-docker-matrix:
+    name: Run Docker images on matrix OS
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        image:
+          - name: nginx
+            tag: nginx:latest
+          - name: redis
+            tag: redis:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull Docker image
+        run: docker pull ${{ matrix.image.tag }}
+
+      - name: Run Docker container
+        run: docker run -d --name "test-${{ matrix.os }}-${{ matrix.image.name }}" ${{ matrix.image.tag }}
+
+      - name: List Docker containers
+        run: docker ps -a

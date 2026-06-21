@@ -1,0 +1,32 @@
+name: Multiple Commands Workflow
+
+# This workflow is triggered manually from the Actions tab.
+# It demonstrates running multiple shell commands in a single step.
+on:
+  workflow_dispatch:
+
+jobs:
+  run-multiple-commands:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        # actions/checkout clones the repository into the runner workspace.
+        # This provides access to files in later steps.
+      
+      - name: Run multiple commands
+        run: |
+          echo "First command"
+          ls -la
+          echo "Second command"
+          pwd
+          echo "Third command"
+          node --version
+        # Use the pipe syntax (|) to run a multiline shell script.
+        # All commands run on the same runner and share the same shell session.
+
+# Notes:
+# - `workflow_dispatch` is useful for manual workflows, debugging, or utility jobs.
+# - You can split the commands into separate steps if you need better logging or
+#   step-level failure handling.
+# - `node --version` shows the installed Node.js version available on the runner.

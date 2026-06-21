@@ -1,0 +1,26 @@
+name: List repository contents
+
+# This workflow is manually triggered from the Actions tab.
+# It performs a checkout of the repository and then lists files in the workspace.
+on:
+    workflow_dispatch:
+
+jobs:
+  list-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        # actions/checkout clones your repository into the GitHub Actions runner.
+        # This makes the source code and repository files available to later steps.
+
+      - name: List repository files
+        run: ls -ltra
+        # `ls -ltra` prints the directory contents in long format, showing hidden
+        # files, timestamps, and newest files at the bottom.
+
+# Notes:
+# - `actions/checkout@v7` is the standard action for accessing repository files.
+# - Use this workflow to verify that the repository is available to steps
+#   and to inspect the contents of the workspace on the runner.
+# - You can extend this by adding build, test, or deployment steps after checkout.
