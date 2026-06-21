@@ -1,0 +1,14 @@
+name: Simple Workflow
+
+on:
+  workflow_dispatch:
+    # This workflow will run when manually triggered
+    # You can also trigger this workflow from the Actions tab in your repository.
+
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World
+        run: echo "Hello, World!"
