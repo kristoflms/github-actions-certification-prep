@@ -1,0 +1,19 @@
+name: Simple Workflow
+run-name: simple-workflow
+# This workflow runs only when manually triggered.
+# Use the Actions tab in GitHub and choose "Run workflow" to start it.
+# You can also add inputs to `workflow_dispatch` to pass parameters at runtime.
+on:
+  workflow_dispatch:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World
+        run: echo "Hello, World!"
+
+# Notes:
+# - `workflow_dispatch` is useful for workflows that should not run automatically on push or pull request events.
+# - The `hello` job runs on a single Linux runner and prints a simple message.
+# - You can extend this workflow by adding more jobs or steps under `jobs`.
