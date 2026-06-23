@@ -5,7 +5,6 @@ name: Simple Workflow
 on:
   workflow_dispatch:
 
-
 jobs:
   hello:
     runs-on: ubuntu-latest
