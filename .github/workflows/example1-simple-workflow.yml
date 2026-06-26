@@ -1,4 +1,5 @@
 name: Simple Workflow
+run-name: simple-workflow
 
 # This workflow runs only when manually triggered.
 # Use the Actions tab in GitHub and choose "Run workflow" to start it.
