@@ -1,0 +1,12 @@
+name: Cron-based Workflow
+
+on:
+  schedule:
+    - cron: '*/2 * * * *'
+
+jobs:
+  scheduled-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run scheduled task
+        run: echo "This job runs every 2 minutes"

@@ -1,0 +1,35 @@
+name: Use cowsay without install
+
+# This workflow is manually triggered via the Actions tab.
+# It demonstrates installing a package, then running a command only if
+# the install succeeds.
+on:
+  workflow_dispatch:
+
+jobs:
+  fail-with-cowsay:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install cowsay
+        run: sudo apt-get update && sudo apt-get install -y cowsay
+        # Updates the package cache and installs cowsay on the runner.
+        # This step will fail if the package installation cannot complete.
+
+      - name: Run cowsay
+        if: ${{ success() }}
+        run: cowsay "This workflow should succeed because cowsay is installed"
+        # Only runs when all previous steps in the job have succeeded.
+        # `cowsay` prints the specified text using ASCII art.
+
+      - name: Installation failed message
+        if: ${{ failure() }}
+        run: echo "Installation has failed"
+        # Runs only if any previous step in this job fails.
+        # This provides a simple fallback message for failure cases.
+
+# Notes:
+# - `workflow_dispatch` is ideal for manual testing or one-off tool execution.
+# - Use `success()` and `failure()` conditionals to control job flow.
+# - If the install step fails, the `cowsay` command is skipped.
+# - This workflow shows how to install a package dynamically instead of
+#   assuming it is already present in the runner image.
