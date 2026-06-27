@@ -1,0 +1,47 @@
+name: Dependencies and Data Sharing
+run-name: dependencies-and-data-sharing
+
+on: push
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create a file
+        run: echo "Shared data from job1" > shared-file.txt
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: shared-data
+          path: shared-file.txt
+
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: shared-data
+      
+      - name: Process file
+        run: cat shared-file.txt && echo "Processed by job2" >> shared-file.txt
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: shared-data
+          path: shared-file.txt
+
+  job3:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: shared-data
+      
+      - name: Finalize file
+        run: cat shared-file.txt && echo "Finalized by job3" >> shared-file.txt && cat shared-file.txt

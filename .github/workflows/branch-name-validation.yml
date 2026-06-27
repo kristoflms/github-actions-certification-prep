@@ -1,0 +1,49 @@
+name: Branch Naming Validation
+run-name: branch-naming-validation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate branch name and protected branch push
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            source_branch="$GITHUB_HEAD_REF"
+            echo "Source branch: $source_branch"
+          else
+            source_branch="${GITHUB_REF#refs/heads/}"
+            echo "Push branch: $source_branch"
+          fi
+
+          protected_branches=(main)
+          for protected in "${protected_branches[@]}"; do
+            if [[ "$source_branch" == "$protected" ]]; then
+              echo "::error file=branch-name-validation line=1::Direct push to protected branch '$source_branch' is not allowed. Use a feature/bugfix/hotfix/release/docs branch and open a PR."
+              exit 1
+            fi
+          done
+
+          if [[ "$source_branch" =~ ^(main|development|(feature|bugfix|hotfix|release|docs)/[a-z0-9._-]+)$ ]]; then
+            echo "Branch name '$source_branch' is valid."
+            exit 0
+          fi
+
+          echo "::error file=branch-name-validation line=1::Branch name '$source_branch' does not follow the naming rules."
+          echo "::error file=branch-name-validation line=2::Allowed prefixes: feature/, bugfix/, hotfix/, release/, docs/."
+          echo "::error file=branch-name-validation line=3::Use lowercase letters, numbers, hyphens, dots, or underscores after the prefix."
+          exit 1

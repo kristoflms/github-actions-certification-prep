@@ -1,0 +1,238 @@
+# Understanding the `actions/checkout` Action
+
+The `actions/checkout` action is one of the most commonly used actions in GitHub Actions. It downloads (checks out) your repository onto the GitHub Actions runner so your workflow can access the files.
+
+Without this action, the runner starts with an **empty workspace** and cannot access your repository's code.
+
+---
+
+## Basic Usage
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: List files
+        run: ls -la
+```
+
+The repository contents are now available in the runner's working directory.
+
+---
+
+## Why is Checkout Needed?
+
+Most workflows need access to repository files such as:
+
+* Source code
+* Configuration files
+* Scripts
+* Dockerfiles
+* Terraform configurations
+* Documentation
+
+Without checking out the repository, these files do not exist on the runner.
+
+Example:
+
+```yaml
+steps:
+  - run: ls
+```
+
+Output:
+
+```
+(no repository files found)
+```
+
+After adding `actions/checkout`:
+
+```yaml
+steps:
+  - uses: actions/checkout@v5
+  - run: ls
+```
+
+Output:
+
+```
+README.md
+src/
+.github/
+package.json
+...
+```
+
+---
+
+## Common Options
+
+### Checkout a Specific Branch
+
+```yaml
+- uses: actions/checkout@v5
+  with:
+    ref: development
+```
+
+---
+
+### Checkout a Specific Tag
+
+```yaml
+- uses: actions/checkout@v5
+  with:
+    ref: v1.0.0
+```
+
+---
+
+### Checkout a Specific Commit
+
+```yaml
+- uses: actions/checkout@v5
+  with:
+    ref: 6dcb09b
+```
+
+---
+
+### Fetch Full Git History
+
+By default, only the latest commit is downloaded.
+
+```yaml
+- uses: actions/checkout@v5
+  with:
+    fetch-depth: 0
+```
+
+Useful when your workflow needs:
+
+* Git history
+* Tags
+* Git log
+* Version calculations
+* Changelog generation
+
+---
+
+### Checkout into a Different Directory
+
+```yaml
+- uses: actions/checkout@v5
+  with:
+    path: source-code
+```
+
+Repository structure:
+
+```
+workspace/
+└── source-code/
+```
+
+---
+
+### Checkout Multiple Repositories
+
+```yaml
+steps:
+  - name: Checkout current repository
+    uses: actions/checkout@v5
+
+  - name: Checkout another repository
+    uses: actions/checkout@v5
+    with:
+      repository: octocat/example-repo
+      path: external
+```
+
+Result:
+
+```
+workspace/
+├── current-repo/
+└── external/
+```
+
+---
+
+## Common Parameters
+
+| Parameter     | Description                        | Default               |
+| ------------- | ---------------------------------- | --------------------- |
+| `ref`         | Branch, tag, or commit to checkout | Triggering ref        |
+| `fetch-depth` | Number of commits to fetch         | `1`                   |
+| `path`        | Directory to place the repository  | Current workspace     |
+| `repository`  | Repository to checkout             | Current repository    |
+| `token`       | Authentication token               | `${{ github.token }}` |
+| `submodules`  | Checkout Git submodules            | `false`               |
+
+---
+
+## When Do You Need Checkout?
+
+Use `actions/checkout` whenever your workflow:
+
+* Builds source code
+* Runs tests
+* Deploys an application
+* Uses Terraform
+* Builds Docker images
+* Runs scripts from the repository
+* Reads configuration files
+
+---
+
+## When Might You Not Need Checkout?
+
+Some workflows do **not** require repository files, for example:
+
+* Sending a Slack notification
+* Calling an external API
+* Creating a GitHub issue
+* Posting to Microsoft Teams
+* Running a simple echo command
+
+Example:
+
+```yaml
+steps:
+  - run: echo "Hello from GitHub Actions!"
+```
+
+No checkout is necessary.
+
+---
+
+## Best Practices
+
+* Use the latest stable version (currently `actions/checkout@v5`).
+* Keep the default `fetch-depth: 1` unless full history is required.
+* Use `fetch-depth: 0` only when necessary, as it increases checkout time.
+* Use `path` when checking out multiple repositories.
+* Avoid hardcoding personal access tokens when the default `github.token` is sufficient.
+
+---
+
+## Summary
+
+| Task                    | Checkout Required? |
+| ----------------------- | ------------------ |
+| Build application       | ✅ Yes              |
+| Run unit tests          | ✅ Yes              |
+| Deploy Terraform        | ✅ Yes              |
+| Build Docker image      | ✅ Yes              |
+| Read repository files   | ✅ Yes              |
+| Send Slack notification | ❌ No               |
+| Call an external API    | ❌ No               |
+| Simple `echo` command   | ❌ No               |
+
+In most GitHub Actions workflows, `actions/checkout` is the **first step**, as it provides the runner with access to your repository's files.

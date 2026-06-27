@@ -1,0 +1,86 @@
+name: Display available GitHub Actions contexts
+run-name: display-available-contexts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  show-contexts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show github context
+        env:
+          CONTEXT_JSON: ${{ toJson(github) }}
+        run: |
+          echo "github context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show env context
+        env:
+          CONTEXT_JSON: ${{ toJson(env) }}
+        run: |
+          echo "env context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show vars context
+        env:
+          CONTEXT_JSON: ${{ toJson(vars) }}
+        run: |
+          echo "vars context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show inputs context
+        env:
+          CONTEXT_JSON: ${{ toJson(inputs) }}
+        run: |
+          echo "inputs context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show matrix context
+        env:
+          CONTEXT_JSON: ${{ toJson(matrix) }}
+        run: |
+          echo "matrix context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show needs context
+        env:
+          CONTEXT_JSON: ${{ toJson(needs) }}
+        run: |
+          echo "needs context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show strategy context
+        env:
+          CONTEXT_JSON: ${{ toJson(strategy) }}
+        run: |
+          echo "strategy context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show job context
+        env:
+          CONTEXT_JSON: ${{ toJson(job) }}
+        run: |
+          echo "job context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show steps context
+        env:
+          CONTEXT_JSON: ${{ toJson(steps) }}
+        run: |
+          echo "steps context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show runner context
+        env:
+          CONTEXT_JSON: ${{ toJson(runner) }}
+        run: |
+          echo "runner context:"
+          echo "$CONTEXT_JSON"
+
+      - name: Show secrets context
+        env:
+          CONTEXT_JSON: ${{ toJson(secrets) }}
+        run: |
+          echo "secrets context:"
+          echo "$CONTEXT_JSON"

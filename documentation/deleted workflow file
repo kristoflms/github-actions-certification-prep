@@ -1,0 +1,1 @@
+When you delete a workflow file it will still be present in the UI until you delete all the runs.

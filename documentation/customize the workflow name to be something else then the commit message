@@ -1,0 +1,60 @@
+Can you change the description of the run to be something else than the commit message in the Actions UI
+
+Yes. GitHub Actions now supports a top-level run-name field, which lets you customize the name of each workflow run that appears in the Actions UI instead of using the default (often the commit message for push events or other event-derived text).
+
+For example:
+
+name: Deploy Infrastructure
+
+run-name: Deploy to ${{ inputs.environment }} by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        required: true
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying..."
+
+When you manually trigger this workflow and choose prod, the run will appear as something like:
+
+Deploy to prod by @kristof
+You can use expressions
+
+run-name supports GitHub Actions expressions, for example:
+
+run-name: Build ${{ github.ref_name }}
+
+or
+
+run-name: Release ${{ github.sha }}
+
+or
+
+run-name: CI - ${{ github.event_name }} - ${{ github.actor }}
+What you cannot do
+
+The run-name is evaluated before the jobs start, so you cannot:
+
+Change it from within a step.
+Update it during the workflow.
+Use outputs from jobs or steps in the run-name.
+If you don't specify run-name
+
+GitHub uses a default name based on the triggering event:
+
+push: often the head commit message.
+pull_request: the PR title.
+workflow_dispatch: typically the workflow name.
+
+Since you're learning GitHub Actions in depth, I recommend using run-name on almost every workflow. It makes the Actions page much easier to navigate, especially for workflows that deploy to different environments or run multiple variants.

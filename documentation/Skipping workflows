@@ -1,0 +1,73 @@
+# Skipping GitHub Actions Workflows
+
+There are several ways to prevent a GitHub Actions workflow from running.
+
+## Option 1 - Cancel a Running Workflow (GitHub UI)
+
+If a workflow has already started:
+
+1. Go to the **Actions** tab of your repository.
+2. Select the running workflow.
+3. Click **Cancel workflow** in the upper-right corner.
+
+This immediately stops the workflow execution.
+
+---
+
+## Option 2 - Skip Workflows Using the Commit Message
+
+GitHub automatically skips workflows triggered by `push` or `pull_request` when the commit message contains one of the following keywords:
+
+- `[skip ci]`
+- `[ci skip]`
+- `[no ci]`
+- `[skip actions]`
+- `[actions skip]`
+
+### Example
+
+```bash
+git commit -m "Update documentation [skip ci]"
+git push
+```
+
+or
+
+```bash
+git commit -m "Fix typo [ci skip]"
+git push
+```
+
+The workflow will not be triggered for that commit.
+
+> **Note:** These keywords only affect workflows triggered by `push` and `pull_request` events. They do **not** skip workflows started by events such as `workflow_dispatch`, `schedule`, `repository_dispatch`, or other event types.
+
+---
+
+## Option 3 - Skip Using the `skip-checks` Trailer
+
+GitHub also supports the following commit trailer:
+
+```text
+skip-checks:true
+```
+
+Example:
+
+```text
+Improve README
+
+skip-checks:true
+```
+
+This has the same effect as the skip keywords for supported events.
+
+---
+
+## Summary
+
+| Method | When to Use |
+|---------|-------------|
+| Cancel workflow (UI) | Stop a workflow that is already running |
+| `[skip ci]` or similar | Prevent a workflow from starting on a push or pull request |
+| `skip-checks:true` | Alternative commit trailer to skip supported workflows |
